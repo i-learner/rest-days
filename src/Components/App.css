@@ -1,0 +1,121 @@
+#root {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 2rem;
+  flex: 1;
+  display: flex;
+}
+
+.LeaveDaySelector label {
+  display: block;
+}
+
+.LeaveDaySelector input {
+  margin-right: 0.5em;
+}
+
+input,
+select {
+  padding: 0.5em;
+}
+
+.HolidayPreview {
+  width: 100%;
+}
+
+.HolidayPreview--statutory {
+  font-family: "Arial", "Helvetica", "sans-serif", "microsoft jhenghei";
+}
+
+.HolidayPreview--statutory td {
+  height: 19px;
+  padding: 7px 5px;
+}
+
+.HolidayPreview--statutory td:first-child::after {
+  content: ".";
+}
+
+.HolidayPreview--general {
+  border-collapse: collapse;
+}
+
+.HolidayPreview--general tr:nth-child(odd) {
+  background: #F2F3F5;
+}
+
+.HolidayPreview--general td {
+  padding: 20px 25px;
+  color: #353535;
+  border: 1px solid #ccc;
+}
+
+.Summary th {
+  text-align: left;
+}
+
+.Summary td {
+  font-weight: normal;
+  vertical-align: top;
+}
+
+.Calendar {
+  table-layout: fixed;
+  border-collapse: collapse;
+}
+
+.Calendar th,
+.Calendar td {
+  text-align: center;
+  width: 26px;
+  height: 26px;
+  position: relative;
+}
+
+.Calendar .oddMonth {
+  background-color: hsla(0, 0%, 0%, 0.1);
+  z-index: -1;
+}
+
+.Calendar .weekendDay,
+.Calendar .statutory {
+  color: white;
+}
+
+.Calendar .general {
+  color: inherit;
+}
+
+.Calendar .weekendDay::before,
+.Calendar .statutory::before,
+.Calendar .general::before {
+  content: "";
+  display: block;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  border-radius: 50%;
+  z-index: -1;
+}
+
+.Calendar .weekendDay::before {
+  background-color: hsl(25, 100%, 57%);
+}
+
+
+.Calendar .statutory::before {
+  background-color: hsl(0, 100%, 50%);
+}
+
+.Calendar .general::before {
+  background-color: hsl(50, 100%, 50%);
+}
+
+.Calendar .otherYear {
+  color: #CCC;
+}
+
+.Calendar .otherYear::before {
+  content: none;
+}
