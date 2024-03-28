@@ -4,6 +4,7 @@
   padding: 2rem;
   flex: 1;
   display: flex;
+  align-items: flex-start;
 }
 
 .LeaveDaySelector label {
@@ -73,8 +74,8 @@ select {
 }
 
 .Calendar .oddMonth {
-  background-color: hsla(0, 0%, 0%, 0.1);
-  z-index: -1;
+  background-color: hsla(0, 0%, 0%, 0.05);
+  /* z-index: -1; */
 }
 
 .Calendar .weekendDay,
@@ -118,4 +119,18 @@ select {
 
 .Calendar .otherYear::before {
   content: none;
+}
+
+.Policy {
+  border-collapse: collapse;
+}
+
+.Policy thead th {
+  border-bottom: 1px solid #333;
+}
+
+.Policy th,
+.Polcy td {
+  text-align: left;
+  padding: 0.25em;
 }

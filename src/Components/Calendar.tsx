@@ -1,11 +1,10 @@
 import { generateRange, getDateFromJulian, getFirstOfYear, getJulian, getWeekDayFromJulian } from "../calendar";
-
-const MONTHS = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+import { HolidayRecord } from "../holidays";
 
 interface CalendarProps {
     year: number;
     workDays: number[];
-    holidays: [string, string, number][];
+    holidays: HolidayRecord[];
 }
 
 export function Calendar({ year, workDays, holidays }: CalendarProps) {
@@ -25,8 +24,6 @@ export function Calendar({ year, workDays, holidays }: CalendarProps) {
 
     const weeks = generateRange(0, weekCount).map(w => calendarStart + w * 7);
 
-    const holidayJulians = holidays.map(hol => getJulian(new Date(hol[0])));
-
     function getDayClassName(julian: number) {
         const date = getDateFromJulian(julian);
 
@@ -34,9 +31,9 @@ export function Calendar({ year, workDays, holidays }: CalendarProps) {
             workDays.includes(getWeekDayFromJulian(julian)) ? "workDay" : "weekendDay",
         ];
 
-        const holidayIndex = holidayJulians.indexOf(julian);
-        if (holidayIndex >= 0) {
-            classNames.push(holidays[holidayIndex][2] === 1 ? "statutory" : "general");
+        const holiday = holidays.find(h => h.julian === julian);
+        if (holiday) {
+            classNames.push(holiday.statutory ? "statutory" : "general");
         }
 
         if (julian < yearStartJulian || julian >= nextStartJulian) {
@@ -46,6 +43,22 @@ export function Calendar({ year, workDays, holidays }: CalendarProps) {
         classNames.push(date.getMonth() % 2 ? "oddMonth" : "evenMonth");
 
         return classNames.join(" ");
+    }
+
+    const formatter = new Intl.DateTimeFormat([], { dateStyle: "long" })
+
+    function getDayTitle(julian: number) {
+        const d = getDateFromJulian(julian);
+        const titles = [
+            formatter.format(d),
+        ];
+
+        const holiday = holidays.find(h => h.julian === julian);
+        if (holiday) {
+            titles.push(holiday.name);
+        }
+
+        return titles.join("\n");
     }
 
     return (
@@ -79,15 +92,23 @@ export function Calendar({ year, workDays, holidays }: CalendarProps) {
                     const saClass = getDayClassName(weekStart + 5);
                     const suClass = getDayClassName(weekStart + 6);
 
+                    const moTitle = getDayTitle(weekStart);
+                    const tuTitle = getDayTitle(weekStart + 1);
+                    const weTitle = getDayTitle(weekStart + 2);
+                    const thTitle = getDayTitle(weekStart + 3);
+                    const frTitle = getDayTitle(weekStart + 4);
+                    const saTitle = getDayTitle(weekStart + 5);
+                    const suTitle = getDayTitle(weekStart + 6);
+
                     return (
                         <tr key={weekStart}>
-                            <td className={moClass} title={MONTHS[mo.getMonth()]}>{mo.getDate()}</td>
-                            <td className={tuClass} title={MONTHS[tu.getMonth()]}>{tu.getDate()}</td>
-                            <td className={weClass} title={MONTHS[we.getMonth()]}>{we.getDate()}</td>
-                            <td className={thClass} title={MONTHS[th.getMonth()]}>{th.getDate()}</td>
-                            <td className={frClass} title={MONTHS[fr.getMonth()]}>{fr.getDate()}</td>
-                            <td className={saClass} title={MONTHS[sa.getMonth()]}>{sa.getDate()}</td>
-                            <td className={suClass} title={MONTHS[su.getMonth()]}>{su.getDate()}</td>
+                            <td className={moClass} title={moTitle}>{mo.getDate()}</td>
+                            <td className={tuClass} title={tuTitle}>{tu.getDate()}</td>
+                            <td className={weClass} title={weTitle}>{we.getDate()}</td>
+                            <td className={thClass} title={thTitle}>{th.getDate()}</td>
+                            <td className={frClass} title={frTitle}>{fr.getDate()}</td>
+                            <td className={saClass} title={saTitle}>{sa.getDate()}</td>
+                            <td className={suClass} title={suTitle}>{su.getDate()}</td>
                         </tr>
                     );
                 })}

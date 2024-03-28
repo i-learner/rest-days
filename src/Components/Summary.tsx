@@ -1,12 +1,14 @@
-import { generateRange, getFirstOfYear, getJulian, getWeekDay, getWeekDayFromJulian } from "../calendar";
+import { generateRange, getFirstOfYear, getJulian, getWeekDayFromJulian } from "../calendar";
+import { HolidayRecord } from "../holidays";
 
 interface SummaryProps {
     year: number;
     workDays: number[];
-    holidays: [string, string, number][];
+    holidays: HolidayRecord[];
+    statutory?: boolean;
 }
 
-export function Summary({ year, workDays, holidays }: SummaryProps) {
+export function Summary({ year, workDays, holidays, statutory = false }: SummaryProps) {
     const yearStart = getFirstOfYear(year);
     const nextStart = getFirstOfYear(year + 1);
 
@@ -19,7 +21,9 @@ export function Summary({ year, workDays, holidays }: SummaryProps) {
         return workDays.includes(getWeekDayFromJulian(julian));
     });
 
-    const holidayJulians = holidays.map(hol => getJulian(new Date(hol[0])));
+    const holidayJulians = statutory ?
+        holidays.filter(h => h.statutory).map(h => h.julian) :
+        holidays.map(h => h.julian);
 
     const workingDays = maxWorkingDays.filter(j => !holidayJulians.includes(j));
 

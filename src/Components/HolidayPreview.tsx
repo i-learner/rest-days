@@ -1,7 +1,8 @@
 import { useState } from "react";
+import { HolidayRecord } from "../holidays";
 
 interface HolidayPreviewProps {
-    holidays: [string, string, number][];
+    holidays: HolidayRecord[];
 }
 
 const DAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
@@ -11,15 +12,15 @@ export function HolidayPreview({ holidays }: HolidayPreviewProps) {
 
     const filteredHolidays = mode === "all" ? holidays : (
         mode === "statutory" ?
-            holidays.filter(hol => hol[2] === 1) :
-            holidays.filter(hol => new Date(hol[0]).getDay() !== 0)
+            holidays.filter(hol => hol.statutory) :
+            holidays.filter(hol => hol.date.getDay() !== 0)
     );
 
     if (filteredHolidays.length === 0) {
         return null;
     }
 
-    const year = filteredHolidays[0][0].substring(0, 4);
+    const year = filteredHolidays[0].date.getFullYear();
 
     return (
         <div>
@@ -39,13 +40,13 @@ export function HolidayPreview({ holidays }: HolidayPreviewProps) {
                         mode === "general" && <tr><td></td><td>Every Sunday</td><td></td><td>Sunday</td></tr>
                     }
                     {
-                        filteredHolidays.map(([date, name, statutory], i) => (
+                        filteredHolidays.map((hol, i) => (
                             <tr key={i}>
                                 <td>{i + 1}</td>
-                                <td>{name}</td>
-                                <td>{date}</td>
-                                <td>{DAYS[new Date(date).getDay()]}</td>
-                                {mode === "all" && <td>{statutory ? "Statutory" : ""}</td>}
+                                <td>{hol.name}</td>
+                                <td>{isodate(hol.date)}</td>
+                                <td>{DAYS[hol.date.getDay()]}</td>
+                                {mode === "all" && <td>{hol.statutory ? "Statutory" : ""}</td>}
                             </tr>
                         ))
                     }
@@ -53,4 +54,8 @@ export function HolidayPreview({ holidays }: HolidayPreviewProps) {
             </table>
         </div>
     )
+}
+
+function isodate(date: Date) {
+    return date.toISOString().substring(0, 10);
 }

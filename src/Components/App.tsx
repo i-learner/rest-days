@@ -1,16 +1,22 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import './App.css'
 import { WorkDaySelector } from './WorkDaySelector';
 import { getHolidaysByYear } from '../holidays';
 import { HolidayPreview } from './HolidayPreview';
 import { Summary } from './Summary';
 import { Calendar } from './Calendar';
+import { Policy } from './Policy';
 
 function App() {
-  const [workDays, setWorkDays] = useState([] as number[]);
+  const [workDays, setWorkDays] = useState([1, 2, 3, 4, 5]);
   const [year, setYear] = useState(2024);
+  const [ignoreNonStatutory, setIgnoreNonStatutory] = useState(false);
 
-  const holidays = getHolidaysByYear(year);
+  const allHolidays = useMemo(() => getHolidaysByYear(year), [year]);
+
+  const holidays = ignoreNonStatutory ?
+    allHolidays.filter(h => h.statutory) :
+    allHolidays;
 
   return (
     <>
@@ -25,9 +31,19 @@ function App() {
           <button onClick={() => setYear(year => year + 1)}>&gt;</button>
         </div>
         <h2>Public Holidays</h2>
+        <label>
+          <input type="checkbox" checked={ignoreNonStatutory} onChange={e => setIgnoreNonStatutory(e.target.checked)} />
+          <span>Ignore Non-Statutory Holidays</span>
+        </label>
         <HolidayPreview holidays={holidays} />
         <h2>Summary</h2>
         <Summary year={year} workDays={workDays} holidays={holidays} />
+        <h2>Policy</h2>
+        <label>
+          <input type="checkbox" checked={ignoreNonStatutory} onChange={e => setIgnoreNonStatutory(e.target.checked)} />
+          <span>Ignore Non-Statutory Holidays</span>
+        </label>
+        <Policy year={year} workDays={workDays} holidays={holidays} />
       </div>
       <Calendar year={year} workDays={workDays} holidays={holidays} />
     </>
